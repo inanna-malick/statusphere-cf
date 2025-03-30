@@ -80,6 +80,16 @@ export default {
 			checktime(event.time_us);
 			// let s: Object =event.did;
 			// insert_status_update(event.commit.record.subject.uri)
+			event.commit.rkey
+			// NOTE: uri is a combo of did + record type (collection?) + rkey, so can just generate these (OR: use DID + rkey directly, that's better tbh anyway)
+			// ok hell yeah roadblock cleared
+			// also: my understanding of the update-on-conflict case is just if an update is published for a _specific_ status update event, not if a user publishes _any_ new status
+
+			// HELL YEAH ok I updated the schema but not actual db contents, looks like now I can just port the json over and be ready, nice. nice. yeah. ok go tf to sleep lol
+
+
+			// OK IMPORTANT NOTE: next up test ability to do repo reads/writes type stuff. at this point I have proof of conecpt
+			// for firehose read via jetstream, next important proof is ability to do writes to the system. plumbing via d3 can wait.
 		});
 
 
