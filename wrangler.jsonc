@@ -7,9 +7,30 @@
 	"name": "jetstream-listener",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-03-27",
+	"compatibility_flags": [
+		"nodejs_compat"
+	  ],	
 	"observability": {
 		"enabled": true
-	}
+	},
+	"triggers": {
+		"crons": [
+		  "* * * * *",
+		]
+	},
+	"d1_databases": [
+	    {
+	      "binding": "DB",
+	      "database_name": "statusphere",
+	      "database_id": "8fe55de9-1214-47db-9438-7a49182c1b53"
+	    }
+	  ],
+	  "kv_namespaces": [
+		{
+		  "binding": "KV",
+		  "id": "baa49878558f43508616ddf3d01ff873"
+		}
+	  ]
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

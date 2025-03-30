@@ -9,6 +9,11 @@
 		"test": "vitest",
 		"cf-typegen": "wrangler types"
 	},
+	"dependencies": {
+		"@atproto/identity": "^0.4.0",
+		"@atproto/sync": "^0.1.4"
+
+	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.7.5",
 		"@cloudflare/workers-types": "^4.20250327.0",
