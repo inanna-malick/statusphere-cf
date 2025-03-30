@@ -18,6 +18,7 @@
 		"@atproto/oauth-client-node": "^0.2.2",
 		"@atproto/syntax": "^0.3.0",
 		"@atproto/xrpc-server": "^0.7.9",
+		"@skyware/jetstream": "^0.2.2",
 		"uhtml": "^4.5.9"
 	},
 	"devDependencies": {

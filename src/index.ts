@@ -1,4 +1,5 @@
 import { IdResolver } from '@atproto/identity'
+import { Jetstream } from "@skyware/jetstream";
 
 /**
  * Welcome to Cloudflare Workers! This is your first worker.
@@ -12,6 +13,7 @@ import { IdResolver } from '@atproto/identity'
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
+
 
 export default {
 	async scheduled(
@@ -28,44 +30,51 @@ export default {
 
 		let uri = `wss://jetstream2.us-east.bsky.network/subscribe\?wantedCollections=xyz.statusphere.status\&cursor=${one_minute_ago_us}`;
 		
-		
 
-        var ws = new WebSocket(uri);
-
-		async function on_msg(event: MessageEvent) {
-
-			if (typeof event.data === 'string') {
-				const data = JSON.parse(event.data);
-				console.log("Message from server with time", data.time_us);
-
-				
+		const jetstream = new Jetstream({
+			wantedCollections: ["xyz.statusphere.status"],
+			cursor: one_minute_ago_us,
+		});
 
 
-				if (data.time_us >= now_us) {
-					console.log("reached current time at worker start, closing websocket");
-					ws.removeEventListener("message", on_msg);
-					ws.close();
+		function checktime(us: number) {
 
-					const { results } = await env.DB.prepare(
-						"SELECT * FROM Customers WHERE CompanyName = ?",
-					  )
-						.bind("Bs Beverages")
-						.all();
+
+				if (us >= now_us) {
+					console.log("reached current time at worker start, closing client");
+
+					jetstream.close()
 				
 				}
-
-				
-			  } else {
-				 // Handle cases where event.data is not a string, e.g., ArrayBuffer, Blob, etc.
-				console.warn('Unexpected data type:', event.data);
-			  }
 		}
 
-		ws.addEventListener("message", on_msg);
+
+		jetstream.onCreate("xyz.statusphere.status", (event) => {
+			let x = JSON.stringify(event.commit.record)
+			console.log(`New post with record: ${x}`);
+			checktime(event.time_us);
+		});
+		
+		jetstream.onDelete("xyz.statusphere.status", (event) => {
+			console.log(`Deleted post with rkey: ${event.commit.rkey}`)
+			checktime(event.time_us);
+		});
+
+		jetstream.on("account", (event) => {
+			console.log(`Account updated: ${event.did}`)
+			checktime(event.time_us);
+		});
+
+		jetstream.on("identity", (event) => {
+			console.log(`identity event: ${event.did}`)
+			checktime(event.time_us);
+		});
+
+		jetstream.start()
 
 		let closed = new Promise((resolve, reject) => {
-				ws.addEventListener("close", (event) => {
-					console.log("close");
+			jetstream.on("close", () => {
+					console.log("connection closed");
 					resolve(null);
 				})
 		});
