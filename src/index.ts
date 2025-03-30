@@ -24,16 +24,16 @@ export default {
 
 
 		let now_us = Date.now() * 1000;
-		let one_minute_ago_us = now_us - (1000 * 1000 * 60);
+		let five_minutes_ago_us = now_us - (1000 * 1000 * 60 * 5);
 
-		console.log(`cron process start at us ${now_us} and reading with cursor ${one_minute_ago_us}`);
+		console.log(`cron process start at us ${now_us} and reading with cursor ${five_minutes_ago_us}`);
 
-		let uri = `wss://jetstream2.us-east.bsky.network/subscribe\?wantedCollections=xyz.statusphere.status\&cursor=${one_minute_ago_us}`;
+		let uri = `wss://jetstream2.us-east.bsky.network/subscribe\?wantedCollections=xyz.statusphere.status\&cursor=${five_minutes_ago_us}`;
 		
 
 		const jetstream = new Jetstream({
 			wantedCollections: ["xyz.statusphere.status"],
-			cursor: one_minute_ago_us,
+			cursor: five_minutes_ago_us,
 		});
 
 
@@ -48,12 +48,47 @@ export default {
 				}
 		}
 
+		function insert_status_update(uri: string, did: string, status: string, createdAt: string, indexed_us: number) {
+			// await db
+            // .insertInto('status')
+            // .values({
+            //   uri: evt.uri.toString(),
+            //   authorDid: evt.did,
+            //   status: record.status,
+            //   createdAt: record.createdAt,
+            //   indexedAt: now.toISOString(),
+            // })
+            // .onConflict((oc) =>
+            //   oc.column('uri').doUpdateSet({
+            //     status: record.status,
+            //     indexedAt: now.toISOString(),
+            //   })
+            // )
+            // .execute()
+		}
+
+		function delete_status_update() {
+			// Remove the status from our SQLite
+			// await db.deleteFrom('status')
+			//   .where('uri', '=', evt.uri.toString()).execute()
+		}
+
 
 		jetstream.onCreate("xyz.statusphere.status", (event) => {
-			let x = JSON.stringify(event.commit.record)
+			let x = JSON.stringify(event)
+			console.log(`New post with record: ${x}`);
+			checktime(event.time_us);
+			// let s: Object =event.did;
+			// insert_status_update(event.commit.record.subject.uri)
+		});
+
+
+		jetstream.onUpdate("xyz.statusphere.status", (event) => {
+			let x = JSON.stringify(event)
 			console.log(`New post with record: ${x}`);
 			checktime(event.time_us);
 		});
+
 		
 		jetstream.onDelete("xyz.statusphere.status", (event) => {
 			console.log(`Deleted post with rkey: ${event.commit.rkey}`)
@@ -61,12 +96,12 @@ export default {
 		});
 
 		jetstream.on("account", (event) => {
-			console.log(`Account updated: ${event.did}`)
+			// console.log(`Account updated: ${event.did}`)
 			checktime(event.time_us);
 		});
 
 		jetstream.on("identity", (event) => {
-			console.log(`identity event: ${event.did}`)
+			// console.log(`identity event: ${event.did}`)
 			checktime(event.time_us);
 		});
 

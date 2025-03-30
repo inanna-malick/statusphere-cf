@@ -22,14 +22,8 @@
 	    {
 	      "binding": "DB",
 	      "database_name": "statusphere",
-	      "database_id": "8fe55de9-1214-47db-9438-7a49182c1b53"
+	      "database_id": "230d15f8-fefd-4806-9c4a-88a0bbe8802b"
 	    }
-	  ],
-	  "kv_namespaces": [
-		{
-		  "binding": "KV",
-		  "id": "baa49878558f43508616ddf3d01ff873"
-		}
 	  ]
 	/**
 	 * Smart Placement
