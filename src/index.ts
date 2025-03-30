@@ -1,4 +1,3 @@
-import { Firehose } from '@atproto/sync'
 import { IdResolver } from '@atproto/identity'
 
 /**
@@ -29,19 +28,33 @@ export default {
 
 		let uri = `wss://jetstream2.us-east.bsky.network/subscribe\?wantedCollections=xyz.statusphere.status\&cursor=${one_minute_ago_us}`;
 		
+		
 
         var ws = new WebSocket(uri);
 
-		function on_msg(event: MessageEvent) {
+		async function on_msg(event: MessageEvent) {
 
 			if (typeof event.data === 'string') {
 				const data = JSON.parse(event.data);
 				console.log("Message from server with time", data.time_us);
+
+				
+
+
 				if (data.time_us >= now_us) {
 					console.log("reached current time at worker start, closing websocket");
 					ws.removeEventListener("message", on_msg);
 					ws.close();
+
+					const { results } = await env.DB.prepare(
+						"SELECT * FROM Customers WHERE CompanyName = ?",
+					  )
+						.bind("Bs Beverages")
+						.all();
+				
 				}
+
+				
 			  } else {
 				 // Handle cases where event.data is not a string, e.g., ArrayBuffer, Blob, etc.
 				console.warn('Unexpected data type:', event.data);
