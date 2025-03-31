@@ -1,11 +1,10 @@
-// import type {
-//   NodeSavedSession,
-//   NodeSavedSessionStore,
-//   NodeSavedState,
-//   NodeSavedStateStore,
-// } from '@atproto/oauth-client-node'
+import type {
+  NodeSavedSession,
+  NodeSavedSessionStore,
+  NodeSavedState,
+  NodeSavedStateStore,
+} from '@atproto/oauth-client-node'
 
-import { InternalStateData, Session, SessionStore, StateStore } from '@atproto/oauth-client'
 
 type AuthStateRow = {
   key: string;
@@ -18,9 +17,9 @@ type AuthSessionRow = {
   session: string;
   };
 
-export class MyStateStore implements StateStore {
+export class StateStore implements NodeSavedStateStore {
   constructor(private env: Env) {}
-  async get(key: string): Promise<InternalStateData | undefined> {
+  async get(key: string): Promise<NodeSavedState | undefined> {
 
     const result = await this.env.DB.prepare(
       "SELECT * FROM auth_state WHERE key = ?",
@@ -31,9 +30,9 @@ export class MyStateStore implements StateStore {
 
     // const result = await this.env.DB.selectFrom('auth_state').selectAll().where('key', '=', key).executeTakeFirst()
     if (!result) return
-    return JSON.parse(result.state) as InternalStateData
+    return JSON.parse(result.state) as NodeSavedState
   }
-  async set(key: string, val: InternalStateData) {
+  async set(key: string, val: NodeSavedState) {
     const state = JSON.stringify(val)
 
     await this.env.DB.prepare("INSERT INTO auth_state (key, state) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET state = ?"      
@@ -54,9 +53,9 @@ export class MyStateStore implements StateStore {
   }
 }
 
-export class MySessionStore implements SessionStore {
+export class SessionStore implements NodeSavedSessionStore {
   constructor(private env: Env) {}
-  async get(key: string): Promise<Session | undefined> {
+  async get(key: string): Promise<NodeSavedSession | undefined> {
 
     const result = await this.env.DB.prepare(
       "SELECT * FROM auth_session WHERE key = ?",
@@ -66,9 +65,9 @@ export class MySessionStore implements SessionStore {
 
     // const result = await this.env.DB.bind('SLECT Fauth_session').selectAll().where('key', '=', key).executeTakeFirst()
     if (!result) return
-    return JSON.parse(result.session) as Session
+    return JSON.parse(result.session) as NodeSavedSession
   }
-  async set(key: string, val: Session) {
+  async set(key: string, val: NodeSavedSession) {
     const session = JSON.stringify(val)
 
 
