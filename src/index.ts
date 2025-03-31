@@ -1,5 +1,11 @@
 import { IdResolver } from '@atproto/identity'
 import { Jetstream } from "@skyware/jetstream";
+import { TID } from '@atproto/common'
+import { Agent } from '@atproto/api'
+import * as Status from './lexicon/types/xyz/statusphere/status'
+import * as Profile from './lexicon/types/app/bsky/actor/profile'
+import { OAuthClient } from '@atproto/oauth-client';
+import { createRouter } from './routes';
 
 /**
  * Welcome to Cloudflare Workers! This is your first worker.
@@ -129,27 +135,14 @@ export default {
 	
 
 	async fetch(request, env, ctx): Promise<Response> {
-		// let uri = "wss://jetstream2.us-east.bsky.network/subscribe\?wantedCollections=xyz.statusphere.status";
-		
-		// console.log("init");
 
-        // var ws = new WebSocket(uri);
-		// ws.addEventListener("message", (event) => {
-		// 	console.log("Message from server ", event.data);
-		// });
+		let client = todo;
+		let router = createRouter(client, env);
 
-		// let closed = new Promise((resolve, reject) => {
-		// 		ws.addEventListener("close", (event) => {
-		// 			// resolve(());
-		// 			console.log("close");
-		// 			resolve(null);
-		// 		})
-		// });
-
-		// ctx.waitUntil(closed);
-
-		return new Response("idk");
+		return router.request(request)
 	},
+
+
 } satisfies ExportedHandler<Env>;
 
 

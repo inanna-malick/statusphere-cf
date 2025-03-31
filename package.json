@@ -15,10 +15,11 @@
 		"@atproto/common": "^0.4.1",
 		"@atproto/identity": "^0.4.0",
 		"@atproto/lexicon": "^0.4.2",
-		"@atproto/oauth-client-node": "^0.2.2",
+		"@atproto/oauth-client": "^0.3.12",
 		"@atproto/syntax": "^0.3.0",
 		"@atproto/xrpc-server": "^0.7.9",
 		"@skyware/jetstream": "^0.2.2",
+		"itty-router": "^5.0.18",
 		"uhtml": "^4.5.9"
 	},
 	"devDependencies": {
