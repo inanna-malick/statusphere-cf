@@ -18,13 +18,6 @@
 		  "* * * * *",
 		]
 	},
-	"d1_databases": [
-	    {
-	      "binding": "DB",
-	      "database_name": "statusphere",
-	      "database_id": "8fe55de9-1214-47db-9438-7a49182c1b53"
-	    }
-	  ],
 	  "kv_namespaces": [
 		{
 		  "binding": "KV",

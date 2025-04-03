@@ -28,20 +28,23 @@ export default {
 
 		console.log(`cron process start at us ${now_us} and reading with cursor ${one_minute_ago_us}`);
 
-		let uri = `wss://jetstream2.us-east.bsky.network/subscribe\?wantedCollections=xyz.statusphere.status\&cursor=${one_minute_ago_us}`;
+		// let uri = `wss://jetstream2.us-east.bsky.network/subscribe\?wantedCollections=xyz.statusphere.status\&cursor=${one_minute_ago_us}`;
 		
 
 		const jetstream = new Jetstream({
-			wantedCollections: ["xyz.statusphere.status"],
+			wantedCollections: ["app.bsky.feed.post"],
+			wantedDids: ["did:plc:qvywnipfiyrd6v4qdf4x27wy"],
 			cursor: one_minute_ago_us,
 		});
+
+		let observed = 0;
 
 
 		function checktime(us: number) {
 
 
 				if (us >= now_us) {
-					console.log("reached current time at worker start, closing client");
+					console.log(`reached current time at worker start, closing client after observing ${observed}`);
 
 					jetstream.close()
 				
@@ -49,13 +52,14 @@ export default {
 		}
 
 
-		jetstream.onCreate("xyz.statusphere.status", (event) => {
+		jetstream.onCreate("app.bsky.feed.post", (event) => {
 			let x = JSON.stringify(event.commit.record)
+			observed += 1;
 			console.log(`New post with record: ${x}`);
 			checktime(event.time_us);
 		});
 		
-		jetstream.onDelete("xyz.statusphere.status", (event) => {
+		jetstream.onDelete("app.bsky.feed.post", (event) => {
 			console.log(`Deleted post with rkey: ${event.commit.rkey}`)
 			checktime(event.time_us);
 		});
